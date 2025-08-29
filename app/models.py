@@ -1,14 +1,11 @@
-
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from datetime import datetime
 
 class Base(DeclarativeBase):
     pass
 
 db = SQLAlchemy(model_class=Base)
-
-
 
 # Models
 class Customer(Base):
@@ -17,6 +14,7 @@ class Customer(Base):
     name: Mapped[str] = mapped_column(db.String(255), nullable=False)
     email: Mapped[str] = mapped_column(db.String(255), nullable=False)
     phone: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    password: Mapped[str] = mapped_column(db.String(255), nullable=False)
 
 class Mechanic(Base):
     __tablename__ = 'mechanics'
@@ -34,7 +32,35 @@ class ServiceTickets(Base):
     service_desc: Mapped[str] = mapped_column(db.String(255), nullable=False)
     customer_id: Mapped[int] = mapped_column(db.ForeignKey('customers.id'), nullable=False)
 
+    # Many-to-many relationship with Inventory
+    parts: Mapped[list["Inventory"]] = relationship(
+        "Inventory",
+        secondary="ticket_inventory",
+        back_populates="tickets"
+    )
+
 class ServiceMechanics(Base):
     __tablename__ = 'service_mechanics'
     ticket_id: Mapped[int] = mapped_column(db.ForeignKey('service_tickets.id'), primary_key=True)
     mechanic_id: Mapped[int] = mapped_column(db.ForeignKey('mechanics.id'), nullable=False)
+
+class Inventory(Base):
+    __tablename__ = 'inventory'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    part_name: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    price: Mapped[float] = mapped_column(nullable=False)
+
+    # Many-to-many relationship with ServiceTickets
+    tickets: Mapped[list[ServiceTickets]] = relationship(
+        "ServiceTickets",
+        secondary="ticket_inventory",
+        back_populates="parts"
+    )
+
+# Association table for Inventory ↔ ServiceTickets
+ticket_inventory = db.Table(
+    "ticket_inventory",
+    Base.metadata,
+    db.Column("ticket_id", db.ForeignKey("service_tickets.id"), primary_key=True),
+    db.Column("inventory_id", db.ForeignKey("inventory.id"), primary_key=True)
+)
