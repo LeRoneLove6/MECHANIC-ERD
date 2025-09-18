@@ -31,7 +31,7 @@ class ServiceTickets(Base):
     date_serviced: Mapped[datetime] = mapped_column(db.DateTime, nullable=False)
     service_desc: Mapped[str] = mapped_column(db.String(255), nullable=False)
     customer_id: Mapped[int] = mapped_column(db.ForeignKey('customers.id'), nullable=False)
-
+    mechanic_id: Mapped[int] = mapped_column(db.ForeignKey('mechanics.id'), nullable=False)
     # Many-to-many relationship with Inventory
     parts: Mapped[list["Inventory"]] = relationship(
         "Inventory",
@@ -48,6 +48,7 @@ class Inventory(Base):
     __tablename__ = 'inventory'
     id: Mapped[int] = mapped_column(primary_key=True)
     part_name: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    quantity: Mapped[int] = mapped_column(nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
 
     # Many-to-many relationship with ServiceTickets

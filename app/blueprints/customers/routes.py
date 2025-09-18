@@ -49,7 +49,7 @@ def create_customer():
         customer_data = customer_schema.load(request.json, session=db.session)
     except ValidationError as e:
         return jsonify(e.messages), 400
-
+    
     db.session.add(customer_data)
     db.session.commit()
 

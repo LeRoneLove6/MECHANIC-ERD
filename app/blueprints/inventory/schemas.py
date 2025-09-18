@@ -24,6 +24,7 @@ class NestedInventorySchema(SQLAlchemySchema):
     id = auto_field()
     part_name = auto_field()
     price = auto_field()
+    quantity = auto_field()
 
 
 
@@ -35,6 +36,7 @@ class InventorySchema(SQLAlchemySchema):
     id = auto_field()
     part_name = auto_field()
     price = auto_field()
+    quantity = auto_field()
     # Include related tickets 
     tickets = fields.Nested(NestedServiceTicketSchema, many=True)
 

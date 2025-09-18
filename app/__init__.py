@@ -6,6 +6,20 @@ from .blueprints.mechanics.routes import mechanics_bp
 from .blueprints.service_mechanics.routes import service_mechanics_bp
 from .blueprints.service_tickets.routes import service_tickets_bp
 from .blueprints.inventory.routes import inventory_bp
+from flask_swagger_ui import get_swaggerui_blueprint
+
+SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
+API_URL = '/static/swagger.yaml'  # Our API URL (can be a local resource)
+
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "Mechanic_ERD API"
+    }
+)
+
+
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -16,7 +30,7 @@ def create_app(config_name):
     ma.init_app(app)
     limiter.init_app(app)
     cache.init_app(app)
-    
+  
 
     # Register blueprints
     app.register_blueprint(customers_bp, url_prefix='/customers')
@@ -24,5 +38,6 @@ def create_app(config_name):
     app.register_blueprint(service_mechanics_bp, url_prefix='/service-mechanics')
     app.register_blueprint(service_tickets_bp, url_prefix='/service-tickets')
     app.register_blueprint(inventory_bp, url_prefix='/inventory')
+    app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)  # Registering Swagger UI
 
     return app

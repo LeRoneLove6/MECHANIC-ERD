@@ -13,7 +13,7 @@ def create_service_mechanic():
         return jsonify(e.messages), 400
     db.session.add(servmech_data)
     db.session.commit()
-    return jsonify(servmech_schema.dump(servmech_data)), 201
+    return jsonify(servmech_schema.dump(servmech_data)), 200
 
 @service_mechanics_bp.route('/', methods=['GET'])
 def get_service_mechanics():
@@ -24,14 +24,14 @@ def get_service_mechanics():
 def get_service_mechanic(ticket_id):
     servmech = db.session.get(ServiceMechanics, ticket_id)
     if not servmech:
-        return jsonify({"error": "ServiceMechanic not found"}), 404
+        return jsonify({"error": "ServiceMechanic not found"}), 400
     return jsonify(servmech_schema.dump(servmech)), 200
 
 @service_mechanics_bp.route('/<int:ticket_id>', methods=['PUT'])
 def update_service_mechanic(ticket_id):
     servmech = db.session.get(ServiceMechanics, ticket_id)
     if not servmech:
-        return jsonify({"error": "ServiceMechanic not found"}), 404
+        return jsonify({"error": "ServiceMechanic not found"}), 400
     try:
         updated_data = servmech_schema.load(request.json, session=db.session, partial=True)
     except ValidationError as e:

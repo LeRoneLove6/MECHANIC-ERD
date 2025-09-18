@@ -36,6 +36,7 @@ class ServiceTicketsSchema(SQLAlchemySchema):
     date_serviced = auto_field()
     service_desc = auto_field()
     customer_id = auto_field()
+    mechanic_id = auto_field()
 
     # Use NestedInventorySchema here to avoid recursion conflicts
     parts = fields.Nested(NestedInventorySchema, many=True)
